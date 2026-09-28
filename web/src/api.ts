@@ -132,8 +132,11 @@ export function getApiErrorMessage(error: unknown) {
   return 'Não foi possível concluir a operação.'
 }
 
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const token = getCuratorToken()
+async function request<T>(
+  path: string,
+  init: RequestInit = {},
+  authenticated = false,
+): Promise<T> {
   const headers = new Headers(init.headers)
 
   headers.set('Accept', 'application/json')
@@ -142,7 +145,13 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     headers.set('Content-Type', 'application/json')
   }
 
-  if (token) {
+  if (authenticated) {
+    const token = getCuratorToken()
+
+    if (!token) {
+      throw new Error('Token de curador não informado.')
+    }
+
     headers.set('Authorization', `Bearer ${token}`)
   }
 
@@ -208,10 +217,14 @@ export const api = {
       justificativa?: string
     },
   ) =>
-    request<Game>(`/versoes/${encodeURIComponent(versaoId)}/decisao`, {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    }),
+    request<Game>(
+      `/versoes/${encodeURIComponent(versaoId)}/decisao`,
+      {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      },
+      true,
+    ),
 
   rankingJogadores: (jogo: string, limite = 100) =>
     request<PlayerRank[]>(
@@ -221,11 +234,15 @@ export const api = {
   rankingJogos: () => request<GameRank[]>('/ranking/jogos'),
 
   anonimizarJogador: (apelido: string, jogo?: string) =>
-    request<AnonimizacaoResponse>('/ranking/jogadores/anonimizar', {
-      method: 'POST',
-      body: JSON.stringify({
-        apelido,
-        ...(jogo ? { jogo } : {}),
-      }),
-    }),
+    request<AnonimizacaoResponse>(
+      '/ranking/jogadores/anonimizar',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          apelido,
+          ...(jogo ? { jogo } : {}),
+        }),
+      },
+      true,
+    ),
 }

@@ -6,3 +6,4 @@ dist/
 web/dist/
 mock-api/dist/
 mock-api/data/db.local.json
+.env.local

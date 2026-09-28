@@ -33,9 +33,8 @@ Esse token é artificial e existe somente para desenvolvimento local.
 
 ## Render
 
-O `render.yaml` existente continua preparado para o modo de demonstração com Mock API + frontend servido pelo Fastify.
-
-Para produção integrada ao G1, prefira configurar o build do frontend com `VITE_API_BASE_URL` apontando para a API oficial e publicar o frontend sem usar o mock como fonte de dados.
+O `render.yaml` define `VITE_API_BASE_URL` com a API oficial do G1 no build de produção.
+O Fastify do mock continua sendo usado apenas como servidor do frontend; o Portal não usa os dados do mock quando essa variável está configurada.
 
 ## Validação
 
