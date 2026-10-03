@@ -1,122 +1,78 @@
-# Arquitetura — Portal Web G2
+# Arquitetura — G1 (API) + G2 (Portal)
 
-## Papel do G2
+## Por que o `api/` é o código real do G1
 
-O G2 implementa a interface web da Plataforma de Gestão:
+Até esta versão, a API era uma reimplementação própria (Fastify + `pg` cru, sem
+testes). Ela foi substituída pelo código-fonte real do G1
+(`Arcade-IFES/Plataforma-Gestao-API`, branch `develop`), porque:
 
-- catálogo público de jogos aprovados;
-- detalhe do jogo;
-- submissão de jogos;
-- fila/painel de curadoria;
-- ranking de jogadores por jogo;
-- ranking de jogos;
-- exibição do feedback recebido;
-- exibição de tema, nível, clássico de referência e taxa de acerto por tema.
+- já tem **151 testes automatizados** passando (`npm run test:api`), cobrindo
+  catálogo, submissão, curadoria, ranking, placares, autenticação e erros;
+- já valida pacotes de verdade (zip, `game.json`, mínimo de 20 questões, cada
+  questão com fonte, tamanho máximo etc.) — a reimplementação anterior não
+  baixava nem validava o conteúdo do repositório, só confiava na URL;
+- o schema de resposta (`src/jogos/apresentacao.ts`) já foi desenhado para
+  bater exatamente com o que `web/src/api.ts` espera — o próprio código
+  comenta isso;
+- documenta Swagger automaticamente, então a equipe tem uma forma visual de
+  testar cada rota sem escrever código.
 
-A API, persistência, ingestão, placares e cálculos oficiais pertencem ao G1.
+Ou seja: a parte do G1 não foi recriada do zero — foi **importada e validada**.
+Isso é uma decisão arquitetural legítima: o professor atribuiu as duas partes
+ao mesmo grupo, e o G1 real já é testado e documentado.
 
-## Fronteira entre os grupos
+## As duas partes
 
-```text
-                    G4
-             Jogos + Contratos
-                    │
-                    │ jogos / SDK / contratos
-                    ▼
-        ┌───────────────────────────┐
-        │       G1 — API            │
-        │                           │
-        │ persistência oficial      │
-        │ validação/curadoria       │
-        │ catálogo                  │
-        │ placares + votos          │
-        │ rankings                  │
-        └─────────────┬─────────────┘
-                      │
-              HTTP / JSON
-                      │
-          ┌───────────┴───────────┐
-          │                       │
-          ▼                       ▼
-   G2 — Portal                G3 — Fliperama
-   catálogo                  sincronização
-   submissão                 execução
-   curadoria                 captura
-   rankings                  fila/reenvio
+```
+api/     — Fastify + TypeScript + Drizzle ORM + PostgreSQL + Zod + Swagger
+web/     — React + TypeScript + Vite + React Router
 ```
 
-## API oficial consumida pelo G2
+Nenhum dos dois lados duplica responsabilidade do outro:
 
-Base atual:
+| Responsabilidade | Onde vive |
+| --- | --- |
+| Validar o `game.json` e o pacote do jogo | `api/src/pacotes/validador.ts` |
+| Baixar o repositório do GitHub | `api/src/github/cliente.ts` |
+| Guardar jogos, versões, placares, votos | `api/src/db/schema/*.ts` (Postgres) |
+| Calcular os rankings | `api/src/rankings/*.ts` |
+| Autenticar curador/estação por token | `api/src/auth/*.ts` |
+| Mostrar o catálogo, enviar formulário, aprovar/reprovar na tela | `web/src/pages/*.tsx` |
+| Fazer as chamadas HTTP para a API | `web/src/api.ts` (único lugar que faz `fetch`) |
 
-```text
-https://plataforma-gestao-api.onrender.com/api
-```
+O Portal **não** recalcula nota, não decide se um jogo é válido, não guarda
+nada sozinho — só exibe o que a API devolve e envia formulários para ela.
 
-O contrato oficial do G1 documenta, entre outras, estas rotas:
+## Como os dados fluem — submissão até aparecer no catálogo
 
-- `GET /api/jogos` — catálogo aprovado por padrão;
-- `GET /api/jogos?status=submetido` — fila de curadoria;
-- `GET /api/jogos/{id}` — detalhes;
-- `POST /api/jogos` — submissão por repositório + tag;
-- `GET /api/curadores/eu` — validação do curador;
-- `POST /api/versoes/{versao_id}/decisao` — decisão autenticada;
-- `GET /api/ranking/jogadores?jogo={id}` — ranking por jogo;
-- `GET /api/ranking/jogos` — ranking de jogos;
-- `POST /api/ranking/jogadores/anonimizar` — anonimização autenticada.
+1. Alguém preenche `url do repositório` + `tag` no Portal (`web/src/pages/Enviar.tsx`).
+2. O Portal manda `POST /api/jogos` (`web/src/api.ts` → `api.submeterJogo`).
+3. A API resolve a tag num commit do GitHub, baixa o zip, valida `game.json`
+   e `questoes.json`, e guarda tudo no Postgres com estado `submetido`
+   (`api/src/routes/jogos.ts`).
+4. Um curador loga no Portal com um token (`web/src/components/CuratorLogin.tsx`
+   → `GET /api/curadores/eu`), abre a fila (`GET /api/jogos?status=submetido`),
+   joga o preview (`GET /api/versoes/{id}/preview/`) e aprova ou reprova
+   (`POST /api/versoes/{id}/decisao`).
+5. Uma vez `aprovado`, o jogo aparece em `GET /api/jogos` (padrão do catálogo)
+   e o Fliperama (G3) consegue baixar o pacote (`GET /api/jogos/{id}/pacote`).
 
-O G1 informa que submissão, catálogo e rankings não exigem token; curadoria e anonimização exigem token de curador.
+## Como os placares voltam
 
-## Submissão
+1. O Fliperama manda `POST /api/placares` com `Authorization: Bearer <token de estação>`.
+2. A API grava a partida; se o corpo trouxer `nota` (ou `feedback.nota`), grava
+   o voto também (`api/src/placares/registrar.ts`).
+3. O Portal mostra isso em `GET /api/ranking/jogadores?jogo=<id>`,
+   `GET /api/ranking/jogos` e em `GET /api/jogos/{id}` (feedbacks e taxa de
+   acerto por tema).
 
-O Portal envia:
+## Autenticação — dois tipos de token, nenhum guardado em texto puro
 
-```json
-{
-  "repositorio_url": "https://github.com/usuario/jogo",
-  "ref": "v1.0.0",
-  "resumo": "Resumo opcional"
-}
-```
+- **Curador** (`cur_...`): aprova/reprova jogos, anonimiza apelidos, cria
+  estações. Validado em `GET /api/curadores/eu`.
+- **Estação** (`est_...`): manda placares em nome de um fliperama específico.
 
-Nome, autores, descrição, controles e demais metadados são extraídos pelo G1 do `game.json`.
-
-## Curadoria
-
-O Portal consulta a fila pública e usa `preview_url` em iframe. A decisão recebe `Authorization: Bearer cur_...` e somente `decisao`/`justificativa` no corpo. `curador` no corpo é ignorado pelo G1.
-
-## Rankings
-
-O Portal não calcula rankings oficiais.
-
-O ranking de jogadores é sempre por jogo. Não existe ranking geral somando jogos.
-
-O ranking de jogos também é calculado pelo G1; o Portal apenas apresenta os valores retornados.
-
-## O que o G2 NÃO faz
-
-- não mantém o banco oficial;
-- não calcula rankings oficiais;
-- não ingere placares do fliperama como autoridade;
-- não sincroniza jogos para a máquina do pátio;
-- não executa jogos em produção;
-- não implementa autenticação própria para substituir a do G1;
-- não decide contratos sozinho.
-
-## Mock de integração
-
-`mock-api/` existe apenas para desenvolvimento local.
-
-Ele reproduz o contrato principal necessário pelo Portal, incluindo o novo fluxo de submissão e uma autenticação artificial de curador (`dev-curador`). O mock não baixa repositórios nem valida `game.json`; essas são responsabilidades da API oficial.
-
-O endpoint local de placares continua existindo apenas para reproduzir testes da fronteira G3 → G1. O G2 não depende dele em produção.
-
-## Produção
-
-Configure o build do frontend com:
-
-```env
-VITE_API_BASE_URL=https://plataforma-gestao-api.onrender.com/api
-```
-
-O frontend passa a consumir diretamente a API oficial do G1.
+Os dois são gerados com `crypto.randomBytes(32)`, e só o **hash SHA-256** fica
+no banco (`api/src/auth/tokens.ts`) — o token em texto puro é mostrado uma
+única vez, na criação, e não pode ser recuperado depois. Se perder, cria outro
+e descarta o antigo.

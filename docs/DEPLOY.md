@@ -1,47 +1,51 @@
-# Deploy do Portal G2
+# Deploy — API + Portal
 
-## Produção — API oficial do G1
+São **dois serviços publicados separadamente**, igual ao G1 original: a API
+não serve o Portal, cada um tem sua própria URL. O `render.yaml` na raiz já
+descreve os dois.
 
-O Portal deve ser compilado com:
+## 1. A API (`api/`)
 
-```env
-VITE_API_BASE_URL=https://plataforma-gestao-api.onrender.com/api
-```
+Siga **[`api/docs/deploy.md`](../api/docs/deploy.md)** — é a documentação
+oficial do G1, já escrita para Render + Supabase, e não precisa de nenhuma
+mudança. Resumo:
 
-A variável é incorporada ao build do Vite. Não coloque token de curador nessa variável nem no código.
+1. Crie o banco no Supabase (connection string do *Session pooler*, com
+   `?sslmode=require`) — ver `api/docs/supabase.md`.
+2. No Render: **New → Blueprint**, aponte para este repositório.
+3. Preencha `DATABASE_URL` (obrigatório) e `GITHUB_TOKEN` (recomendado) nas
+   variáveis do serviço `recreio-arcade-api`.
+4. Depois do primeiro deploy, confira `https://<sua-api>.onrender.com/health`
+   → deve responder `"banco":"ok"`.
+5. Crie um curador de verdade (não use `dev-curador` em produção):
+   ```bash
+   DATABASE_URL="<connection string do Supabase>" npm run curador:criar -- "Nome do Curador"
+   ```
+   Rode isso do seu computador, dentro de `api/` — o token só aparece uma vez.
 
-## Desenvolvimento local — Mock
+## 2. O Portal (`web/`)
 
-Para trabalhar sem depender da API oficial:
+O serviço `recreio-arcade-portal` no `render.yaml` já está configurado como
+**site estático** (sem servidor rodando, só arquivos buildados). Depois que a
+API estiver no ar:
 
-```bash
-npm install
-npm install --prefix web
-npm install --prefix mock-api
-npm run dev
-```
+1. No mesmo Blueprint do Render, edite a variável `VITE_API_BASE_URL` do
+   serviço `recreio-arcade-portal` para a URL real da sua API
+   (ex.: `https://recreio-arcade-api.onrender.com/api`).
+2. Edite `CORS_ORIGINS` no serviço da API para incluir a URL do Portal
+   (ex.: `https://recreio-arcade-portal.onrender.com`) — sem isso, o navegador
+   bloqueia as chamadas por CORS.
+3. Deploy.
 
-Use o `.env` sem `VITE_API_BASE_URL` para que o Vite utilize o proxy `/api` apontando para `http://localhost:3000`.
+Teste abrindo o Portal publicado e vendo se o catálogo carrega — se o
+cabeçalho mostrar "API OFFLINE", confira o `VITE_API_BASE_URL` (ele é lido
+**no momento do build**, então mudar a variável exige rodar o deploy de novo)
+e o `CORS_ORIGINS` do lado da API.
 
-No mock local, o token de curador para testes é:
+## 3. Plano gratuito do Render "dorme"
 
-```text
-dev-curador
-```
-
-Esse token é artificial e existe somente para desenvolvimento local.
-
-## Render
-
-O `render.yaml` define `VITE_API_BASE_URL` com a API oficial do G1 no build de produção.
-O Fastify do mock continua sendo usado apenas como servidor do frontend; o Portal não usa os dados do mock quando essa variável está configurada.
-
-## Validação
-
-Antes de considerar o deploy pronto:
-
-```bash
-npm run build
-```
-
-Depois valide contra a API do G1 os fluxos que exigem integração real, principalmente submissão, autenticação de curador, curadoria, rankings e anonimização.
+Os dois serviços no plano free desligam depois de 15 minutos sem acesso. A
+primeira requisição depois disso demora de 30 a 60 segundos. A API já tem um
+workflow do GitHub Actions para isso
+(`api/.github/workflows/manter-acordada.yml`); o Portal estático não dorme
+(sites estáticos no Render não hibernam, só os `type: web`).

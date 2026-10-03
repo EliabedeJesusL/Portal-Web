@@ -1,5 +1,20 @@
 {
-  "name":"recreio-arcade-g2","private":true,"version":"1.0.0","type":"module",
-  "scripts":{"dev":"concurrently -k \"npm:dev:web\" \"npm:dev:api\"","dev:web":"npm --prefix web run dev","dev:api":"npm --prefix mock-api run dev","build":"npm run build:web && npm run build:api","build:web":"npm --prefix web run build","build:api":"npm --prefix mock-api run build","start":"npm --prefix mock-api run start","typecheck":"npm --prefix web run build && npm --prefix mock-api run build"},
-  "devDependencies":{"concurrently":"^9.2.1"}
+  "name": "recreio-arcade-g1-g2",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Monorepo do Recreio Arcade: API oficial (G1, real) + Portal Web (G2).",
+  "scripts": {
+    "install:all": "npm install && npm install --prefix api && npm install --prefix web",
+    "db:up": "npm --prefix api run db:up",
+    "db:down": "npm --prefix api run db:down",
+    "db:migrate": "npm --prefix api run db:migrate",
+    "db:seed": "npm --prefix api run db:seed",
+    "dev": "concurrently -k -n api,web -c blue,magenta \"npm --prefix api run dev\" \"npm --prefix web run dev\"",
+    "test:api": "npm --prefix api test",
+    "build:web": "npm --prefix web run build",
+    "typecheck": "npm --prefix api run typecheck && npm --prefix web run build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
 }

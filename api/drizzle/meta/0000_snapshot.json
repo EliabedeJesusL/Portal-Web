@@ -1,0 +1,781 @@
+{
+  "id": "dbbf3f62-12e6-4e53-8088-7b56165d1ac5",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.curadores": {
+      "name": "curadores",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "nome": {
+          "name": "nome",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_hash": {
+          "name": "token_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "curadores_token_hash_unique": {
+          "name": "curadores_token_hash_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "token_hash"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.estacoes": {
+      "name": "estacoes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "nome": {
+          "name": "nome",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_hash": {
+          "name": "token_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "estacoes_token_hash_unique": {
+          "name": "estacoes_token_hash_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "token_hash"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.jogos": {
+      "name": "jogos",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "nome": {
+          "name": "nome",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "descricao": {
+          "name": "descricao",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "resumo": {
+          "name": "resumo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "autores": {
+          "name": "autores",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "controles": {
+          "name": "controles",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "classico_referencia": {
+          "name": "classico_referencia",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mecanica": {
+          "name": "mecanica",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tema": {
+          "name": "tema",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nivel": {
+          "name": "nivel",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "capa": {
+          "name": "capa",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "repositorio_url": {
+          "name": "repositorio_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.pacotes": {
+      "name": "pacotes",
+      "schema": "",
+      "columns": {
+        "versao_id": {
+          "name": "versao_id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "conteudo": {
+          "name": "conteudo",
+          "type": "bytea",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "pacotes_versao_id_versoes_id_fk": {
+          "name": "pacotes_versao_id_versoes_id_fk",
+          "tableFrom": "pacotes",
+          "tableTo": "versoes",
+          "columnsFrom": [
+            "versao_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.versoes": {
+      "name": "versoes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "jogo_id": {
+          "name": "jogo_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "versao": {
+          "name": "versao",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "estado": {
+          "name": "estado",
+          "type": "estado_versao",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'submetido'"
+        },
+        "ref": {
+          "name": "ref",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "commit_sha": {
+          "name": "commit_sha",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tamanho_bytes": {
+          "name": "tamanho_bytes",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sha256": {
+          "name": "sha256",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "manifesto": {
+          "name": "manifesto",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_questoes": {
+          "name": "total_questoes",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "decidido_por": {
+          "name": "decidido_por",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "justificativa": {
+          "name": "justificativa",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "submetido_em": {
+          "name": "submetido_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "decidido_em": {
+          "name": "decidido_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "versoes_jogo_id_index": {
+          "name": "versoes_jogo_id_index",
+          "columns": [
+            {
+              "expression": "jogo_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "versoes_uma_aprovada_por_jogo": {
+          "name": "versoes_uma_aprovada_por_jogo",
+          "columns": [
+            {
+              "expression": "jogo_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "where": "\"versoes\".\"estado\" = 'aprovado'",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "versoes_numero_unico_por_jogo": {
+          "name": "versoes_numero_unico_por_jogo",
+          "columns": [
+            {
+              "expression": "jogo_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "versao",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "where": "\"versoes\".\"estado\" <> 'reprovado'",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "versoes_jogo_id_jogos_id_fk": {
+          "name": "versoes_jogo_id_jogos_id_fk",
+          "tableFrom": "versoes",
+          "tableTo": "jogos",
+          "columnsFrom": [
+            "jogo_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "versoes_decidido_por_curadores_id_fk": {
+          "name": "versoes_decidido_por_curadores_id_fk",
+          "tableFrom": "versoes",
+          "tableTo": "curadores",
+          "columnsFrom": [
+            "decidido_por"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "versoes_tamanho_positivo": {
+          "name": "versoes_tamanho_positivo",
+          "value": "\"versoes\".\"tamanho_bytes\" > 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.anonimizacoes": {
+      "name": "anonimizacoes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "curador_id": {
+          "name": "curador_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "jogo_id": {
+          "name": "jogo_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "partidas_afetadas": {
+          "name": "partidas_afetadas",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "votos_afetados": {
+          "name": "votos_afetados",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "anonimizacoes_curador_id_curadores_id_fk": {
+          "name": "anonimizacoes_curador_id_curadores_id_fk",
+          "tableFrom": "anonimizacoes",
+          "tableTo": "curadores",
+          "columnsFrom": [
+            "curador_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "anonimizacoes_jogo_id_jogos_id_fk": {
+          "name": "anonimizacoes_jogo_id_jogos_id_fk",
+          "tableFrom": "anonimizacoes",
+          "tableTo": "jogos",
+          "columnsFrom": [
+            "jogo_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.partidas": {
+      "name": "partidas",
+      "schema": "",
+      "columns": {
+        "id_partida": {
+          "name": "id_partida",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "jogo_id": {
+          "name": "jogo_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "jogador": {
+          "name": "jogador",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pontos": {
+          "name": "pontos",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "duracao_s": {
+          "name": "duracao_s",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "acertos": {
+          "name": "acertos",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "erros": {
+          "name": "erros",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tema": {
+          "name": "tema",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "jogado_em": {
+          "name": "jogado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "estacao_id": {
+          "name": "estacao_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "recebido_em": {
+          "name": "recebido_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "partidas_jogo_id_jogador_index": {
+          "name": "partidas_jogo_id_jogador_index",
+          "columns": [
+            {
+              "expression": "jogo_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "jogador",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "partidas_jogo_id_jogos_id_fk": {
+          "name": "partidas_jogo_id_jogos_id_fk",
+          "tableFrom": "partidas",
+          "tableTo": "jogos",
+          "columnsFrom": [
+            "jogo_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "partidas_estacao_id_estacoes_id_fk": {
+          "name": "partidas_estacao_id_estacoes_id_fk",
+          "tableFrom": "partidas",
+          "tableTo": "estacoes",
+          "columnsFrom": [
+            "estacao_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "partidas_jogador_valido": {
+          "name": "partidas_jogador_valido",
+          "value": "\"partidas\".\"jogador\" ~ '^[A-Z0-9]{1,9}$'"
+        },
+        "partidas_valores_nao_negativos": {
+          "name": "partidas_valores_nao_negativos",
+          "value": "\"partidas\".\"pontos\" >= 0 and \"partidas\".\"duracao_s\" >= 0 and \"partidas\".\"acertos\" >= 0 and \"partidas\".\"erros\" >= 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.votos": {
+      "name": "votos",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "jogo_id": {
+          "name": "jogo_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "jogador": {
+          "name": "jogador",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_partida": {
+          "name": "id_partida",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nota": {
+          "name": "nota",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "comentario": {
+          "name": "comentario",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "votos_um_por_jogador": {
+          "name": "votos_um_por_jogador",
+          "columns": [
+            {
+              "expression": "jogo_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "jogador",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "where": "\"votos\".\"jogador\" <> 'ANON'",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "votos_jogo_id_jogos_id_fk": {
+          "name": "votos_jogo_id_jogos_id_fk",
+          "tableFrom": "votos",
+          "tableTo": "jogos",
+          "columnsFrom": [
+            "jogo_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "votos_id_partida_partidas_id_partida_fk": {
+          "name": "votos_id_partida_partidas_id_partida_fk",
+          "tableFrom": "votos",
+          "tableTo": "partidas",
+          "columnsFrom": [
+            "id_partida"
+          ],
+          "columnsTo": [
+            "id_partida"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "votos_nota_valida": {
+          "name": "votos_nota_valida",
+          "value": "\"votos\".\"nota\" between 1 and 5"
+        },
+        "votos_jogador_valido": {
+          "name": "votos_jogador_valido",
+          "value": "\"votos\".\"jogador\" ~ '^[A-Z0-9]{1,9}$'"
+        }
+      },
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.estado_versao": {
+      "name": "estado_versao",
+      "schema": "public",
+      "values": [
+        "submetido",
+        "aprovado",
+        "reprovado",
+        "substituida"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

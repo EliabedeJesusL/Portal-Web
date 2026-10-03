@@ -179,11 +179,7 @@ async function request<T>(
 }
 
 export const api = {
-  health: () =>
-    request<Game[]>('/jogos').then(() => ({
-      ok: true,
-      service: 'recreio-arcade-g1',
-    })),
+  health: () => request<{ ok: boolean; service: string }>('/health'),
 
   jogos: (status?: string) =>
     request<Game[]>(status ? `/jogos?status=${encodeURIComponent(status)}` : '/jogos'),

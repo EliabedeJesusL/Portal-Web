@@ -1,79 +1,73 @@
-# Recreio Arcade — G2 Portal Web
+# Recreio Arcade — G1 + G2
 
-Portal do Grupo 2 para a plataforma de gestão do Recreio Arcade.
+Este repositório reúne as duas partes que o grupo ficou responsável por entregar:
 
-## Stack
+- **`api/`** — a API oficial da Plataforma de Gestão (G1): submissão de jogos por link do GitHub, curadoria, catálogo, placares e rankings. É o código real do G1 (Fastify + TypeScript + Drizzle ORM + PostgreSQL + Zod + Swagger), com 151 testes automatizados.
+- **`web/`** — o Portal Web (G2): catálogo, envio de jogo, curadoria, rankings e feedback. Consome só a API acima, não guarda nada por conta própria.
 
-- React
-- TypeScript
-- Vite
-- Node.js + Fastify (somente no mock de integração)
-- React Router
+Quem mais consome a API: o **Fliperama (G3)**, que sincroniza o catálogo, baixa os pacotes aprovados e envia os placares. Ver [`docs/INTEGRACAO-G3.md`](docs/INTEGRACAO-G3.md).
 
-A linguagem visual segue a plataforma local do G3: fundo escuro, tipografia monoespaciada, cyan/amarelo/magenta/verde neon, alto contraste e controles simples.
+## Visão geral
 
-## Responsabilidade do G2
-
-O G2 é responsável por:
-
-- catálogo público;
-- detalhe do jogo;
-- submissão por URL de repositório GitHub + tag;
-- fila e painel de curadoria;
-- ranking de jogadores por jogo;
-- ranking de jogos;
-- exibição de feedback e taxa de acerto por tema.
-
-O G2 não é responsável pelo banco oficial, cálculo oficial dos rankings, sincronização do fliperama ou captura de placares.
-
-## API oficial do G1
-
-Base atual:
-
-```text
-https://plataforma-gestao-api.onrender.com/api
+```
+            jogo (GitHub + tag)
+                    │
+                    ▼
+   ┌───────────────────────────────┐
+   │      api/  (G1 — este repo)    │
+   │  Fastify + Drizzle + Postgres  │
+   └───────────────┬────────────────┘
+                    │ HTTP / JSON
+        ┌───────────┴────────────┐
+        ▼                        ▼
+  web/ (G2 — este repo)     Fliperama (G3)
+  Portal: catálogo,         baixa pacotes,
+  submissão, curadoria,     envia placares
+  rankings
 ```
 
-Para produção, defina:
+## Rodando tudo localmente
 
-```env
-VITE_API_BASE_URL=https://plataforma-gestao-api.onrender.com/api
-```
-
-O contrato oficial está documentado no repositório do G1 e deve ser tratado como fonte de verdade para a integração.
-
-## Desenvolvimento local
+Precisa de **Node.js 24** e **Docker** (para o Postgres).
 
 ```bash
-npm install
-npm install --prefix web
-npm install --prefix mock-api
-npm run dev
+npm run install:all      # instala api/ e web/
+npm run db:up            # sobe o Postgres (docker compose, dentro de api/)
+npm run db:migrate       # cria as tabelas
+npm run db:seed          # dados de exemplo + tokens de dev (dev-curador / dev-estacao)
+npm run dev              # sobe a API (porta 3000) e o Portal (porta 5173) juntos
 ```
 
-Portal: http://localhost:5173
+Abra:
 
-Mock API: http://localhost:3000
+- Portal: http://localhost:5173
+- API: http://localhost:3000/health
+- Swagger (testar a API no navegador): http://localhost:3000/docs
 
-Se `VITE_API_BASE_URL` estiver vazio, o frontend usa o proxy do Vite para o Mock API.
+Veja [`docs/DOCKER-E-TESTES.md`](docs/DOCKER-E-TESTES.md) para o passo a passo completo de Docker, Swagger e o que esperar ver em cada teste.
 
-## Mock
+## Testando de verdade
 
-`mock-api/` existe somente para desenvolvimento e testes antes ou fora da API oficial.
-
-O mock reproduz o contrato principal do G1 para catálogo, detalhes, submissão, autenticação/curadoria, rankings e anonimização. O token local de curador é `dev-curador`.
-
-O mock não substitui a validação/ingestão real do G1 e não é fonte oficial de dados.
+```bash
+npm run test:api     # roda os 151 testes automatizados da API (api/test/*.test.ts)
+npm run typecheck    # confere se API e Portal compilam sem erro de tipo
+```
 
 ## Documentação
 
-- `docs/ARQUITETURA.md` — fronteiras entre grupos e API oficial.
-- `docs/INTEGRACAO-G1-G3.md` — contratos e responsabilidades.
-- `docs/TESTES-API.md` — testes locais.
-- `docs/DEPLOY.md` — deploy e variáveis de ambiente.
-- `docs/SPEC-KIT-GUIA.md` — como usar Spec-Kit no G2.
-- `.specify/memory/constitution.md` — princípios do repositório.
+| Arquivo | Conteúdo |
+| --- | --- |
+| [`docs/ARQUITETURA.md`](docs/ARQUITETURA.md) | Como `api/` e `web/` se encaixam, responsabilidades de cada parte |
+| [`docs/DOCKER-E-TESTES.md`](docs/DOCKER-E-TESTES.md) | Docker, Swagger, e como testar cada fluxo manualmente |
+| [`docs/DEPLOY.md`](docs/DEPLOY.md) | Publicar a API no Render + Supabase, e o Portal como site estático |
+| [`docs/INTEGRACAO-G3.md`](docs/INTEGRACAO-G3.md) | O que o Fliperama (G3) precisa fazer para falar com esta API |
+| [`api/docs/`](api/docs) | Documentação de referência da API em si (submissão, curadoria, catálogo, ranking, placares, autenticação) — a fonte da verdade de cada contrato |
 
-## Spec-Kit
+## Tokens de desenvolvimento (só localmente, via `npm run db:seed`)
 
-O repositório mantém specs incrementais. A feature `specs/006-integracao-api-g1/` registra o diagnóstico, plano e tarefas da migração do Mock API para a API oficial do G1.
+| Tipo | Token | Para quê |
+| --- | --- | --- |
+| Curador | `dev-curador` | Login na tela de Curadoria do Portal, ou `Authorization: Bearer dev-curador` |
+| Estação (fliperama) | `dev-estacao` | `Authorization: Bearer dev-estacao` em `/api/placares` |
+
+Em produção, gere tokens de verdade com `npm run curador:criar -- "Nome"` dentro de `api/` (ver `docs/DOCKER-E-TESTES.md`).
