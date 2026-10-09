@@ -6,7 +6,7 @@
   ],
   "integration_settings": {
     "gemini": {
-      "script": "ps",
+      "script": "sh",
       "invoke_separator": "."
     }
   },
