@@ -147,3 +147,10 @@ button { cursor: pointer; }
 .station-token { margin-top: 16px; overflow-wrap: anywhere; }
 .station-token code { display: block; margin: 10px 0; padding: 12px; background: #050510; color: var(--cyan); overflow-wrap: anywhere; user-select: all; }
 @media (max-width: 680px) { .station-create-form { grid-template-columns: 1fr; } }
+
+.station-list { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
+.station-list h3 { color: var(--cyan); font-size: 13px; letter-spacing: 1px; }
+.station-list ul { list-style: none; padding: 0; margin: 10px 0; display: grid; gap: 8px; }
+.station-list li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 10px 12px; border: 1px solid var(--line); background: rgba(255,255,255,.02); }
+.station-list li small { color: var(--muted); }
+.curator-global-message { margin: 12px 0 20px; }

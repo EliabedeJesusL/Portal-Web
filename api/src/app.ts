@@ -54,6 +54,16 @@ export async function buildApp({ env, db, github }: AppOptions) {
 
   registerErrorHandlers(app)
 
+  // A raiz da API explica os endpoints principais; o portal é publicado separadamente.
+  app.get('/', async () => ({
+    service: 'Recreio Arcade — API',
+    status: 'online',
+    health: '/health',
+    docs: '/docs',
+    endpoints: ['/api/jogos', '/api/ranking/jogos', '/api/ranking/jogadores'],
+    portal: 'https://recreio-arcade-portal.onrender.com',
+  }))
+
   // O Portal (G2) chama a API de outro domínio pelo navegador.
   await app.register(cors, {
     origin: env.CORS_ORIGINS,

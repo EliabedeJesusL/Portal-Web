@@ -574,6 +574,8 @@ function Moderacao() {
   const [loading, setLoading] = useState(true)
   const [stationName, setStationName] = useState('Fliperama principal')
   const [stationToken, setStationToken] = useState('')
+  const [stations, setStations] = useState<Array<{ id: string; nome: string; criado_em: string }>>([])
+  const [loadingStations, setLoadingStations] = useState(false)
   const [creatingStation, setCreatingStation] = useState(false)
 
   async function load() {
@@ -589,8 +591,40 @@ function Moderacao() {
   }
 
   useEffect(() => {
-    load()
+    void load()
+
+    // Restaura a sessão de curadoria validando novamente o token salvo na sessão.
+    const token = getStoredCuratorToken()
+    if (token) {
+      api.validarCurador(token)
+        .then((curator) => {
+          setCuratorName(curator.nome)
+          setMessage(`Sessão restaurada: ${curator.nome}.`)
+          void loadStations()
+        })
+        .catch(() => {
+          clearCuratorToken()
+          setCuratorName('')
+          setError('A sessão de curadoria não é válida. Informe novamente o token do curador.')
+        })
+    }
   }, [])
+
+  async function loadStations() {
+    if (!getStoredCuratorToken()) {
+      setStations([])
+      return
+    }
+    try {
+      setLoadingStations(true)
+      setStations(await api.listarEstacoes())
+      setError('')
+    } catch (e) {
+      setError(`Não foi possível carregar as estações: ${getApiErrorMessage(e)}`)
+    } finally {
+      setLoadingStations(false)
+    }
+  }
 
   async function decide(decisao: 'aprovado' | 'reprovado') {
     if (!selected) return
@@ -631,6 +665,8 @@ function Moderacao() {
   async function handleValidated(name: string) {
     setCuratorName(name)
     setMessage(`Curador autenticado: ${name}.`)
+    setError('')
+    await loadStations()
   }
 
   async function createStation(event: FormEvent) {
@@ -649,6 +685,8 @@ function Moderacao() {
       const result = await api.criarEstacao(stationName.trim())
       setStationToken(result.token)
       setMessage(`Estação \"${result.nome}\" criada. Guarde o token agora: ele não será exibido novamente.`)
+      setError('')
+      await loadStations()
     } catch (e) {
       setMessage(getApiErrorMessage(e))
     } finally {
@@ -659,6 +697,8 @@ function Moderacao() {
   function logout() {
     clearCuratorToken()
     setCuratorName('')
+    setStations([])
+    setStationToken('')
     setMessage('Token do curador removido desta sessão.')
   }
 
@@ -694,6 +734,26 @@ function Moderacao() {
               {creatingStation ? 'CRIANDO...' : 'CRIAR ESTAÇÃO G3'}
             </button>
           </form>
+          <div className="station-list">
+            <h3>ESTAÇÕES CADASTRADAS</h3>
+            {loadingStations ? (
+              <p>Carregando estações...</p>
+            ) : stations.length === 0 ? (
+              <p>Nenhuma estação cadastrada ainda.</p>
+            ) : (
+              <ul>
+                {stations.map((station) => (
+                  <li key={station.id}>
+                    <strong>{station.nome}</strong>
+                    <small>Criada em {new Date(station.criado_em).toLocaleString('pt-BR')}</small>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <button type="button" className="text-button" onClick={() => void loadStations()} disabled={loadingStations}>
+              ATUALIZAR ESTAÇÕES
+            </button>
+          </div>
           {stationToken && (
             <div className="message message--success station-token">
               <div>
@@ -707,6 +767,7 @@ function Moderacao() {
         </section>
       )}
 
+      {message && <p className="inline-message curator-global-message">{message}</p>}
       {error && <ErrorBox message={error} />}
 
       <section className="moderation-layout">
@@ -771,7 +832,7 @@ function Moderacao() {
                   className="preview-frame"
                   title={`Preview de ${selected.nome}`}
                   src={selected.preview_url}
-                  sandbox="allow-scripts allow-forms"
+                  sandbox="allow-scripts"
                 />
               ) : (
                 <div className="preview-unavailable">
@@ -824,7 +885,6 @@ function Moderacao() {
                   </button>
                 </div>
 
-                {message && <p className="inline-message">{message}</p>}
               </div>
             </>
           )}

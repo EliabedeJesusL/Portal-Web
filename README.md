@@ -63,6 +63,7 @@ npm run typecheck    # confere se API e Portal compilam sem erro de tipo
 | [`docs/DEPLOY.md`](docs/DEPLOY.md) | Publicar a API no Render + Supabase, e o Portal como site estático |
 | [`docs/INTEGRACAO-G3.md`](docs/INTEGRACAO-G3.md) | O que o Fliperama (G3) precisa fazer para falar com esta API |
 | [`docs/PROXIMOS-PASSOS-PRODUCAO.md`](docs/PROXIMOS-PASSOS-PRODUCAO.md) | Demonstração local, criação de estação e checklist de produção |
+| [`docs/DIAGNOSTICO-PRODUCAO.md`](docs/DIAGNOSTICO-PRODUCAO.md) | Diagnóstico de portal vazio, Blueprint, variáveis Render/Supabase e ordem dos testes |
 | [`api/docs/`](api/docs) | Documentação de referência da API em si (submissão, curadoria, catálogo, ranking, placares, autenticação) — a fonte da verdade de cada contrato |
 
 ## Tokens de desenvolvimento (só localmente, via `npm run db:seed`)

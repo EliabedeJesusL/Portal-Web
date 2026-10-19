@@ -128,8 +128,27 @@ export function setCuratorToken(token: string) {
 }
 
 export function getApiErrorMessage(error: unknown) {
-  if (error instanceof Error) return error.message
-  return 'Não foi possível concluir a operação.'
+  if (error instanceof TypeError) {
+    return 'Não foi possível conectar à API. Verifique se o serviço está disponível e se a configuração de endereço e CORS está correta.'
+  }
+
+  if (error instanceof Error) {
+    const status = (error as Error & { status?: number }).status
+    if (status === 400) return error.message || 'Os dados enviados não são válidos. Confira os campos e tente novamente.'
+    if (status === 401) return 'Token ausente ou inválido. Entre novamente com uma credencial válida.'
+    if (status === 403) return 'Você não tem permissão para realizar esta operação.'
+    if (status === 404) return error.message || 'O recurso solicitado não foi encontrado.'
+    if (status === 409) return error.message || 'Esta operação conflita com o estado atual. Atualize a página e tente novamente.'
+    if (status === 422) return error.message || 'O conteúdo não passou pela validação. Confira os requisitos e tente novamente.'
+    if (status === 429) return 'Muitas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente.'
+    if (status && status >= 500) return 'A API encontrou um problema interno. Tente novamente mais tarde ou consulte os logs do serviço.'
+    if (/Failed to fetch|NetworkError|Load failed/i.test(error.message)) {
+      return 'Não foi possível conectar à API. Verifique se o serviço está disponível e se a configuração de endereço e CORS está correta.'
+    }
+    return error.message
+  }
+
+  return 'Não foi possível concluir a operação. Tente novamente.'
 }
 
 async function request<T>(
