@@ -118,6 +118,11 @@ function Layout({
   eyebrow?: string
   children: ReactNode
 }) {
+  // Cada página ganha um título próprio na aba do navegador e nos resultados do Google.
+  useEffect(() => {
+    document.title = `${title} — Recreio Arcade`
+  }, [title])
+
   return (
     <div className="app-shell">
       <Header />

@@ -27,9 +27,10 @@ services:
       # 60/hora, compartilhado com outros serviços do Render.
       - key: GITHUB_TOKEN
         sync: false
-      # Troque pela URL pública do Portal depois de criado (ex.: https://recreio-arcade-portal.onrender.com).
+      # Origens que podem chamar a API pelo navegador: o Portal publicado + o ambiente local.
+      # Se o Render der outro endereço ao Portal, troque aqui.
       - key: CORS_ORIGINS
-        value: http://localhost:5173
+        value: https://recreio-arcade-portal.onrender.com,http://localhost:5173
 
   - type: static
     name: recreio-arcade-portal
