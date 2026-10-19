@@ -12,7 +12,8 @@
     "dev": "concurrently -k -n api,web -c blue,magenta \"npm --prefix api run dev\" \"npm --prefix web run dev\"",
     "test:api": "npm --prefix api test",
     "build:web": "npm --prefix web run build",
-    "typecheck": "npm --prefix api run typecheck && npm --prefix web run build"
+    "typecheck": "npm --prefix api run typecheck && npm --prefix web run build",
+    "demo:setup": "npm run db:up && npm run db:migrate && npm run db:seed"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"

@@ -118,6 +118,11 @@ function Layout({
   eyebrow?: string
   children: ReactNode
 }) {
+  // Cada página ganha um título próprio na aba do navegador e nos resultados do Google.
+  useEffect(() => {
+    document.title = `${title} — Recreio Arcade`
+  }, [title])
+
   return (
     <div className="app-shell">
       <Header />
@@ -567,6 +572,9 @@ function Moderacao() {
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
+  const [stationName, setStationName] = useState('Fliperama principal')
+  const [stationToken, setStationToken] = useState('')
+  const [creatingStation, setCreatingStation] = useState(false)
 
   async function load() {
     try {
@@ -625,6 +633,29 @@ function Moderacao() {
     setMessage(`Curador autenticado: ${name}.`)
   }
 
+  async function createStation(event: FormEvent) {
+    event.preventDefault()
+    if (!curatorName) {
+      setMessage('Valide o token do curador antes de criar uma estação.')
+      return
+    }
+    if (!stationName.trim()) {
+      setMessage('Informe um nome para a estação.')
+      return
+    }
+    try {
+      setCreatingStation(true)
+      setStationToken('')
+      const result = await api.criarEstacao(stationName.trim())
+      setStationToken(result.token)
+      setMessage(`Estação \"${result.nome}\" criada. Guarde o token agora: ele não será exibido novamente.`)
+    } catch (e) {
+      setMessage(getApiErrorMessage(e))
+    } finally {
+      setCreatingStation(false)
+    }
+  }
+
   function logout() {
     clearCuratorToken()
     setCuratorName('')
@@ -643,6 +674,36 @@ function Moderacao() {
           <button className="text-button" onClick={logout}>
             SAIR
           </button>
+        </section>
+      )}
+
+      {curatorName && (
+        <section className="panel station-admin">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow">ESTAÇÕES DO FLIPERAMA</span>
+              <p>Crie uma credencial própria para cada estação G3. O token aparece somente nesta resposta.</p>
+            </div>
+          </div>
+          <form className="station-create-form" onSubmit={createStation}>
+            <label>
+              NOME DA ESTAÇÃO
+              <input value={stationName} onChange={(e) => setStationName(e.target.value)} maxLength={100} required />
+            </label>
+            <button className="arcade-button arcade-button--green" type="submit" disabled={creatingStation}>
+              {creatingStation ? 'CRIANDO...' : 'CRIAR ESTAÇÃO G3'}
+            </button>
+          </form>
+          {stationToken && (
+            <div className="message message--success station-token">
+              <div>
+                <strong>Token da estação — copie e guarde agora</strong>
+                <code>{stationToken}</code>
+                <p>Configure-o como TOKEN_ESTACAO no .env do G3. Não o envie ao GitHub nem o compartilhe publicamente.</p>
+                <button type="button" className="text-button" onClick={() => navigator.clipboard?.writeText(stationToken)}>COPIAR TOKEN</button>
+              </div>
+            </div>
+          )}
         </section>
       )}
 

@@ -137,3 +137,13 @@ button { cursor: pointer; }
   font-size: 10px;
 }
 
+
+/* Administração de estações G3 na sessão autenticada do curador. */
+.station-admin { margin-bottom: 20px; }
+.station-create-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px; align-items: end; }
+.station-create-form label { display: flex; flex-direction: column; gap: 8px; color: var(--yellow); font-size: 12px; font-weight: 900; letter-spacing: 1px; }
+.station-create-form input { width: 100%; border: 2px solid var(--line); background: #050510; color: #fff; padding: 13px; outline: none; }
+.station-create-form input:focus { border-color: var(--cyan); box-shadow: 0 0 9px rgba(0,245,255,.2); }
+.station-token { margin-top: 16px; overflow-wrap: anywhere; }
+.station-token code { display: block; margin: 10px 0; padding: 12px; background: #050510; color: var(--cyan); overflow-wrap: anywhere; user-select: all; }
+@media (max-width: 680px) { .station-create-form { grid-template-columns: 1fr; } }

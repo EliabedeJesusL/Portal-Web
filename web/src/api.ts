@@ -206,6 +206,16 @@ export const api = {
       },
     }),
 
+  criarEstacao: (nome: string) =>
+    request<{ id: string; nome: string; token: string; criado_em: string }>(
+      '/estacoes',
+      { method: 'POST', body: JSON.stringify({ nome }) },
+      true,
+    ),
+
+  listarEstacoes: () =>
+    request<Array<{ id: string; nome: string; criado_em: string }>>('/estacoes', {}, true),
+
   decidirVersao: (
     versaoId: string,
     payload: {

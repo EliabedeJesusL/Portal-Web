@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+# Área restrita a curadores: não faz sentido aparecer no Google.
+Disallow: /moderacao
+
+# TROQUE pela URL real do seu site depois de publicar
+Sitemap: https://recreio-arcade-portal.onrender.com/sitemap.xml
