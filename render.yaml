@@ -30,11 +30,7 @@ services:
       # Origens que podem chamar a API pelo navegador: o Portal publicado + o ambiente local.
       # Se o Render der outro endereço ao Portal, troque aqui.
       - key: CORS_ORIGINS
-<<<<<<< HEAD
-        value: https://recreio-arcade-portal.onrender.com
-=======
         value: https://recreio-arcade-portal.onrender.com,http://localhost:5173
->>>>>>> c498cd553ca4ed3a989176bec021d22fcf008e6c
 
   - type: static
     name: recreio-arcade-portal
