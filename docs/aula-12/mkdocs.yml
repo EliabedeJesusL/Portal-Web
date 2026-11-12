@@ -1,0 +1,19 @@
+site_name: Recreio Arcade — Documentação do Grupo
+site_description: Documentação técnica e atividade Caveman + Spec-Kit
+repo_url: https://github.com/EliabedeJesusL/Portal-Web
+theme:
+  name: mkdocs
+nav:
+  - Aula 12 — Caveman + Spec-Kit:
+      - Visão geral: aula-12/index.md
+      - Trecho original: aula-12/trecho-original-curadoria.md
+      - Exercício 1: aula-12/exercicio-1.md
+      - Exercício 2: aula-12/exercicio-2.md
+      - Exercício 3: aula-12/exercicio-3.md
+      - Exercício 4: aula-12/exercicio-4.md
+      - Exercício 5: aula-12/exercicio-5.md
+      - Guia Spec-Kit + Caveman do Grupo: aula-12/guia-spec-kit-caveman.md
+      - Proposta de tasks: aula-12/proposta-tasks-curadoria.md
+  - Arquitetura: ARQUITETURA.md
+  - Deploy: DEPLOY.md
+  - Integração G3: INTEGRACAO-G3.md
