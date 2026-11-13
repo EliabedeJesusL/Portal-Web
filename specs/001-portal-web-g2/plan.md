@@ -146,3 +146,17 @@ A garantia de não regressão e equivalência estrita será verificada através 
 ## Complexity Tracking
 
 > Nenhuma violação à Constituição foi introduzida; portanto, nenhuma justificativa de complexidade adicional é necessária.
+
+---
+
+## Estado de Execução (atualizado em 12/11/2026)
+
+| Etapa do plano | Estado | Observação |
+| :--- | :---: | :--- |
+| Etapa 1 — componentes | Feito no código | 7 arquivos em `web/src/components/` (inclui `Layout.tsx`, novo) |
+| Etapa 2 — páginas | Feito no código | 6 arquivos em `web/src/pages/` |
+| Etapa 3 — `App.tsx` | Feito no código | Só rotas, 24 linhas (eram 1081) |
+| Etapa 4 — `api.ts` e `styles.css` | Feito no código | Mensagens amigáveis e `:focus-visible` |
+| Validação (`typecheck`, `build:web`, navegador) | **Pendente** | Não executada no ambiente onde a alteração foi feita (sem `node_modules`); ver `tasks.md`, fase 5 |
+
+Nota: o plano falava em 961 linhas no `App.tsx`; o arquivo recebido tinha 1081 (a tela de estações foi adicionada depois). O `iframe` já estava com `sandbox="allow-scripts"` antes do retrofit.

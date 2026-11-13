@@ -64,7 +64,16 @@ npm run typecheck    # confere se API e Portal compilam sem erro de tipo
 | [`docs/INTEGRACAO-G3.md`](docs/INTEGRACAO-G3.md) | O que o Fliperama (G3) precisa fazer para falar com esta API |
 | [`docs/PROXIMOS-PASSOS-PRODUCAO.md`](docs/PROXIMOS-PASSOS-PRODUCAO.md) | Demonstração local, criação de estação e checklist de produção |
 | [`docs/DIAGNOSTICO-PRODUCAO.md`](docs/DIAGNOSTICO-PRODUCAO.md) | Diagnóstico de portal vazio, Blueprint, variáveis Render/Supabase e ordem dos testes |
+| [`docs/aula-12/`](docs/aula-12/index.md) | Atividade da Aula 12 (Caveman + Spec-Kit): exercícios, guia do grupo e registro de alterações |
 | [`api/docs/`](api/docs) | Documentação de referência da API em si (submissão, curadoria, catálogo, ranking, placares, autenticação) — a fonte da verdade de cada contrato |
+
+## Documentação MkDocs
+
+```bash
+pip install mkdocs
+mkdocs serve          # http://127.0.0.1:8000
+mkdocs build --strict # igual ao que roda no GitHub Actions
+```
 
 ## Tokens de desenvolvimento (só localmente, via `npm run db:seed`)
 

@@ -1,7 +1,7 @@
 # O que o Fliperama (G3) precisa
 
 A referência completa já existe em
-**[`api/docs/integracao.md`](../api/docs/integracao.md)** (seção "G3 —
+**[`api/docs/integracao.md`](https://github.com/EliabedeJesusL/Portal-Web/blob/develop/api/docs/integracao.md)** (seção "G3 —
 Fliperama") — este arquivo é só um resumo rápido para a conversa com o outro
 grupo.
 

@@ -40,7 +40,7 @@ Curadoria: token → pendentes → preview isolado → aprovar/reprovar (justifi
 - **Lite:** mantém actor, fluxo, restrição do iframe, justificativa na reprovação, objetivo e teste; já deixa de fora nuances pedagógicas específicas.
 - **Full:** mantém passos críticos e risco, mas não especifica quais campos são exibidos, código de erro ou armazenamento do token; depende da spec completa.
 - **Ultra:** preserva o fluxo macro, porém omite requisito RF-G04/RF-G09, formato do token, regra precisa de sandbox (`allow-scripts`), tratamento de token inválido e critérios de aceite. **Não é suficiente para implementar.**
-- A versão escolhida para comunicação rápida pode ser **Full**, mantendo o documento original como referência normativa. **Aprovação do grupo: PENDENTE.**
+- A versão escolhida para comunicação rápida pode ser **Full**, mantendo o documento original como referência normativa. **Proposta de aprovação (a confirmar pelo grupo): Full para recados e revisões rápidas; o original continua sendo a referência normativa; Ultra só para status/próxima ação, nunca para implementar.**
 
 ## Prompt empregado
 

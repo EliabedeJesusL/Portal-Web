@@ -154,3 +154,27 @@ button { cursor: pointer; }
 .station-list li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 10px 12px; border: 1px solid var(--line); background: rgba(255,255,255,.02); }
 .station-list li small { color: var(--muted); }
 .curator-global-message { margin: 12px 0 20px; }
+
+/* Foco visível no teclado (FR-018): botões, links, cards e itens de fila */
+a:focus-visible,
+button:focus-visible,
+select:focus-visible,
+.arcade-button:focus-visible,
+.queue-item:focus-visible,
+.game-card:focus-visible,
+.text-button:focus-visible,
+.main-nav a:focus-visible,
+.menu-button:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 3px;
+  box-shadow: 0 0 10px rgba(255, 230, 0, .55);
+}
+
+/* Cold start da API (FR-017): ponto amarelo piscando enquanto tenta de novo */
+.status-dot.is-starting { background: var(--yellow); box-shadow: 0 0 9px var(--yellow); animation: status-pulse 1.2s ease-in-out infinite; }
+@keyframes status-pulse { 50% { opacity: .25; } }
+@media (prefers-reduced-motion: reduce) { .status-dot.is-starting { animation: none; } }
+.loading-hint { display: block; max-width: 460px; margin-top: 10px; color: var(--muted); letter-spacing: 0; text-align: center; }
+
+/* Aviso de governança RF-G15 na curadoria */
+.message--warning { color: var(--yellow); border-color: var(--yellow); background: rgba(255,230,0,.04); }

@@ -1,11 +1,11 @@
 # Plan — Feedback acessível na autenticação da Curadoria
 
 **Spec:** [spec.md](spec.md)  
-**Estado:** proposta para revisão.
+**Estado:** executado em 12/11/2026; validação (`typecheck`, `build:web`, navegador) pendente.
 
 ## Decisão técnica
 
-Modificar exclusivamente o formulário de autenticação já existente na função `CuratorLogin` em `web/src/App.tsx` (estrutura da `main` consultada em 12/11/2026).
+Modificar exclusivamente o formulário de autenticação já existente na função `CuratorLogin`. Na `main` consultada ela estava em `web/src/App.tsx`; após o retrofit modular da feature 001 (que o risco abaixo já previa), ela está em `web/src/components/CuratorLogin.tsx`, e a mudança foi feita lá.
 
 1. Embrulhar a exibição condicional do componente `ErrorBox` com `<div role="alert">`, preservando o conteúdo e a lógica existentes.
 2. Adicionar `aria-busy={loading}` ao elemento `<form>` atual.
@@ -19,7 +19,7 @@ Modificar exclusivamente o formulário de autenticação já existente na funç�
 
 ## Verificação
 
-- Conferir diff contendo apenas a mudança esperada no `App.tsx`.
+- Conferir diff contendo apenas a mudança esperada em `CuratorLogin.tsx` (além da extração do componente).
 - `npm run build:web` e `npm run typecheck`.
 - Abrir `/moderacao`, provocar validação inválida e verificar elemento `role="alert"` com texto visível.
 - Durante requisição, conferir `aria-busy="true"` e botão desabilitado; ao fim, `aria-busy="false"`.

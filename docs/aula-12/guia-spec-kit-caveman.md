@@ -1,6 +1,6 @@
 # Guia Spec-Kit + Caveman do Grupo
 
-**Projeto:** Recreio Arcade — G2, Curadoria. **Ferramenta utilizada nesta preparação:** prompts equivalentes ao Caveman. Não houve instalação comprovada do skill. O Spec-Kit original do projeto estava configurado para Gemini; a revisão auxiliar foi feita em ChatGPT.
+**Projeto:** Recreio Arcade — G2, Curadoria. **Ferramenta utilizada nesta preparação:** prompts equivalentes ao Caveman. Não houve instalação comprovada do skill. O Spec-Kit do projeto está configurado para Gemini; a revisão auxiliar foi feita em ChatGPT e as alterações foram aplicadas ao código por Claude.
 
 ## Quando usar
 
@@ -38,7 +38,7 @@ Segurança de preview, autenticação, perda de dados, decisões arquiteturais, 
 
 **Caveman (Full):** "Token de curador → fila de versões pendentes."
 
-**Avaliação da revisão:** mantém ação central, mas omite validação do token e estados de erro. **Decisão do grupo:** PENDENTE.
+**Avaliação da revisão:** mantém a ação central, mas omite validação do token e estados de erro. **Decisão proposta:** ajustar. Usar a versão Full só em recados; na spec, manter o texto completo e acrescentar "a justificativa é obrigatória só ao reprovar" (aplicado em `spec.md`, US4).
 
 ### Exemplo 2 — Regra de preview
 
@@ -46,7 +46,7 @@ Segurança de preview, autenticação, perda de dados, decisões arquiteturais, 
 
 **Caveman (Full):** "Preview em iframe sandbox `allow-scripts`; proibir `allow-same-origin`/`allow-forms`."
 
-**Avaliação da revisão:** preserva restrição de segurança, adequada a checklist de revisão. **Decisão do grupo:** PENDENTE.
+**Avaliação da revisão:** preserva a restrição de segurança, adequada a checklist de revisão. **Decisão proposta:** aceitar. Conferido no código: `Moderacao.tsx` usa `sandbox="allow-scripts"`.
 
 ### Exemplo 3 — Plano de modularização
 
@@ -54,16 +54,18 @@ Segurança de preview, autenticação, perda de dados, decisões arquiteturais, 
 
 **Caveman (Full):** "Extrair páginas/componentes sem mudar rotas, textos e comportamento; corrigir não conformidades."
 
-**Avaliação da revisão:** boa síntese operacional; ainda requer testes reais de equivalência. **Decisão do grupo:** PENDENTE.
+**Avaliação da revisão:** boa síntese operacional, mas escondia que o plano não estava executado. **Decisão proposta:** aceitar e aplicar. O retrofit foi feito (`App.tsx` de 1081 para 24 linhas); a equivalência ainda precisa de `typecheck`, `build:web` e comparação no navegador.
 
-## Registro de decisões finais
+## Registro de decisões finais (a confirmar pelo grupo)
 
-| Exemplo | Aceitar/ajustar/rejeitar | Responsável/data | Evidência |
+| Exemplo | Decisão | Responsável/data | Evidência |
 |---|---|---|---|
-| 1 | PENDENTE | PENDENTE | PENDENTE |
-| 2 | PENDENTE | PENDENTE | PENDENTE |
-| 3 | PENDENTE | PENDENTE | PENDENTE |
+| 1 | Ajustar | a preencher | `spec.md`, US4 |
+| 2 | Proposta: aceitar | a preencher | `web/src/pages/Moderacao.tsx` |
+| 3 | Proposta: aceitar e aplicar | a preencher | `web/src/pages/`, `web/src/components/`, `tasks.md` (T001 a T018) |
 
-## Conclusão provisória
+*Nomes dos responsáveis e data de aceite: preencher pelo grupo antes da entrega.*
 
-Comunicação concisa facilita revisão, mas precisa de fontes rastreáveis. O recorte usado nos exercícios está em [Exercício 2](exercicio-2.md), e o teste externo aguardado no [Exercício 4](exercicio-4.md).
+## Conclusão
+
+Comunicação concisa facilita revisão, mas precisa de fontes rastreáveis. O recorte usado nos exercícios está em [Exercício 2](exercicio-2.md). A troca com outro grupo ([Exercício 4](exercicio-4.md)) foi dispensada, então o limite do Ultra vem só da nossa comparação com o original.

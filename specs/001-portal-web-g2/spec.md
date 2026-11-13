@@ -135,7 +135,7 @@ para que minha versão entre na fila de avaliação da curadoria e eu receba men
 ### User Story 4 - Autenticação de Curador e Moderação de Versões com Preview (Priority: P4)
 
 Como um **curador** da plataforma Recreio Arcade,
-quero me autenticar fornecendo meu token de acesso `cur_...`, visualizar a fila de jogos pendentes de moderação, jogar o preview interativo de cada submissão em ambiente seguro e emitir a decisão de aprovação ou reprovação com justificativa obrigatória,
+quero me autenticar fornecendo meu token de acesso `cur_...`, visualizar a fila de jogos pendentes de moderação, jogar o preview interativo de cada submissão em ambiente seguro e emitir a decisão de aprovação ou reprovação (a justificativa é opcional ao aprovar e obrigatória ao reprovar),
 para garantir a qualidade técnica, pedagógica e de segurança dos jogos antes de disponibilizá-los aos fliperamas.
 
 **Rastreabilidade de Requisitos**: RF-G04, RF-G09.
@@ -289,19 +289,20 @@ Esta seção audita o código real implementado em `web/src/` contra os requisit
 
 | Item Avaliado | Requisito Esperado | Implementação Atual no Código | Situação |
 | :--- | :--- | :--- | :--- |
-| **Organização do Código** | Código modular com páginas em `web/src/pages/` e componentes em `web/src/components/` (Princípio 6) | Arquivos em `web/src/pages/*.tsx` e `web/src/components/*.tsx` estão com 0 bytes; todas as telas e componentes residem monoliticamente em `web/src/App.tsx` (961 linhas) | **DESVIO** |
-| **Isolamento do Preview** | Preview de jogo em `<iframe sandbox="allow-scripts">` sem `allow-same-origin` e sem `allow-forms` (Princípio 3, FR-008) | `web/src/App.tsx` (linha 716) renderiza `<iframe sandbox="allow-scripts allow-forms" ... />`, concedendo indevidamente permissão de formulários | **DESVIO** |
-| **Tratamento de Erros da API** | Mensagens claras e amigáveis, expressamente proibida a exposição de códigos técnicos como `Erro HTTP <status>` (Princípio 4, FR-020) | `web/src/api.ts` (linha 182) contém fallback `const message = errorBody?.erro \|\| \`Erro HTTP ${response.status}\``, expondo status HTTP bruto quando a resposta não é JSON padronizado | **DESVIO** |
-| **Tolerância a Cold Start** | Tolerância explícita a cold start com feedback contínuo amigável (Princípio 5, FR-017) | `web/src/App.tsx` faz apenas chamada pontual a `api.health()`. Se falhar por cold start, marca imediatamente `API OFFLINE` (ponto rosa) sem retentativa nem mensagem explicativa na tela | **DESVIO** |
-| **Foco Visível no Teclado** | Indicador de foco visualmente destacado em todos os elementos interativos para acessibilidade (Princípio 5, FR-018) | `web/src/styles.css` estiliza foco apenas para `input`, `textarea` e `select`. Botões (`.arcade-button`, `.queue-item`), cards (`.game-card`) e links não possuem `:focus-visible` explícito | **DESVIO** |
+| **Organização do Código** | Código modular com páginas em `web/src/pages/` e componentes em `web/src/components/` (Princípio 6) | Corrigido em 12/11/2026: 6 páginas em `web/src/pages/*.tsx` e 7 componentes em `web/src/components/*.tsx`; `App.tsx` ficou só com as rotas (24 linhas). Aguardando `npm run typecheck` e `npm run build:web` | **CORRIGIDO (validar build)** |
+| **Isolamento do Preview** | Preview de jogo em `<iframe sandbox="allow-scripts">` sem `allow-same-origin` e sem `allow-forms` (Princípio 3, FR-008) | `web/src/pages/Moderacao.tsx` renderiza `<iframe sandbox="allow-scripts" ... />` (conferido no código; o `allow-forms` já havia sido removido antes da modularização) | **CONFORME** |
+| **Tratamento de Erros da API** | Mensagens claras e amigáveis, expressamente proibida a exposição de códigos técnicos como `Erro HTTP <status>` (Princípio 4, FR-020) | Corrigido em 12/11/2026: `web/src/api.ts` usa `mapHttpStatusToFriendlyMessage(status)` quando a resposta não traz `erro`; `{ codigo, erro }` da API continua prevalecendo | **CORRIGIDO (validar build)** |
+| **Tolerância a Cold Start** | Tolerância explícita a cold start com feedback contínuo amigável (Princípio 5, FR-017) | Corrigido em 12/11/2026: `Header.tsx` tenta `api.health()` a cada 5 s (até 12 vezes) mostrando `API INICIANDO...`; `Loading` exibe aviso após 6 s de espera | **CORRIGIDO (validar no navegador)** |
+| **Foco Visível no Teclado** | Indicador de foco visualmente destacado em todos os elementos interativos para acessibilidade (Princípio 5, FR-018) | Corrigido em 12/11/2026: `web/src/styles.css` ganhou regras `:focus-visible` para links, botões, `.queue-item`, `.game-card` e menu | **CORRIGIDO (validar no navegador)** |
 | **Persistência de Sessão do Curador** | Token exclusivamente em `sessionStorage` (Princípio 3, FR-006) | `web/src/api.ts` utiliza `sessionStorage.getItem/setItem` com a chave `recreio-arcade-curador-token` | **CONFORME** |
 | **Prevenção de XSS** | Dados de usuário e da API renderizados estritamente como texto plano (Princípio 3, FR-019) | Todos os valores são interpolados como expressões de texto do React (`{game.nome}`, `{feedback.comentario}`), sem uso de `dangerouslySetInnerHTML` | **CONFORME** |
-| **Catálogo Público de Jogos** | Exibição de capas, autores, notas e contagem de votos (RF-G05, RF-G10, RF-G12) | Implementado funcionalmente na função `Catalogo` de `App.tsx` | **CONFORME** |
-| **Detalhes do Jogo** | Exibição de versões, comentários, notas e taxa de acerto por tema (RF-G09, RF-G10, RF-G12) | Implementado funcionalmente na função `Detalhes` de `App.tsx` | **CONFORME** |
-| **Formulário de Submissão** | Envio exclusivo de `repositorio_url`, `ref` e `resumo` opcional (RF-G01) | Implementado funcionalmente na função `Enviar` de `App.tsx` e `api.submeterJogo` | **CONFORME** |
-| **Ranking de Jogadores por Jogo** | Consulta restrita por jogo via `?jogo=<id>` (RF-G07) | Implementado na função `RankingJogadores` de `App.tsx`, exigindo seleção prévia de jogo | **CONFORME** |
-| **Ranking de Jogos com Fórmula** | Exibição da contagem de votos e explicação da fórmula ponderada (RF-G08, RF-G14) | Implementado na função `RankingJogos` de `App.tsx` com bloco explicativo da nota ajustada | **CONFORME** |
-| **Moderação com Justificativa** | Aprovação e reprovação com justificativa obrigatória na reprovação (RF-G04) | Implementado na função `Moderacao` de `App.tsx` com validação de preenchimento para reprovação | **CONFORME** |
+| **Catálogo Público de Jogos** | Exibição de capas, autores, notas e contagem de votos (RF-G05, RF-G10, RF-G12) | Implementado em `web/src/pages/Catalogo.tsx` | **CONFORME** |
+| **Detalhes do Jogo** | Exibição de versões, comentários, notas e taxa de acerto por tema (RF-G09, RF-G10, RF-G12) | Implementado em `web/src/pages/Detalhes.tsx` | **CONFORME** |
+| **Formulário de Submissão** | Envio exclusivo de `repositorio_url`, `ref` e `resumo` opcional (RF-G01) | Implementado em `web/src/pages/Enviar.tsx` e `api.submeterJogo` | **CONFORME** |
+| **Ranking de Jogadores por Jogo** | Consulta restrita por jogo via `?jogo=<id>` (RF-G07) | Implementado em `web/src/pages/RankingJogadores.tsx`, exigindo seleção prévia de jogo | **CONFORME** |
+| **Ranking de Jogos com Fórmula** | Exibição da contagem de votos e explicação da fórmula ponderada (RF-G08, RF-G14) | Implementado em `web/src/pages/RankingJogos.tsx`, com o bloco explicativo em `web/src/components/FormulaModal.tsx` | **CONFORME** |
+| **Moderação com Justificativa** | Aprovação e reprovação com justificativa obrigatória na reprovação (RF-G04) | Implementado em `web/src/pages/Moderacao.tsx` com validação de preenchimento para reprovação | **CONFORME** |
+| **Aviso de Governança RF-G15** | Aviso orientador em destaque na curadoria (FR-014) | Adicionado em 12/11/2026 em `web/src/pages/Moderacao.tsx` (`role="note"`). É aviso, não bloqueio técnico: a API não identifica o autor como curador | **CORRIGIDO (validar no navegador)** |
 | **Anonimização por Curador** | Chamada autenticada para trocar apelido por `ANON` (RF-G16) | Implementado via rota `/ranking/jogadores/anonimizar` com token de curador | **CONFORME** |
 
 ---

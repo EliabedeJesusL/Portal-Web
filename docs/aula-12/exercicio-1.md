@@ -1,6 +1,6 @@
 # Exercício 1 — Diagnóstico de verbosidade
 
-**Fonte real:** `specs/001-portal-web-g2/spec.md`, User Story 4, recorte preservado em [trecho original](trecho-original-curadoria.md). **Status:** revisão produzida com prompt equivalente ao Caveman; ainda depende de avaliação do grupo.
+**Fonte real:** `specs/001-portal-web-g2/spec.md`, User Story 4, recorte preservado em [trecho original](trecho-original-curadoria.md). **Status:** revisão feita com prompt equivalente ao Caveman. As decisões abaixo são **propostas**; o grupo precisa confirmar ou alterar antes da entrega.
 
 ## Prompt empregado (simulação manual)
 
@@ -23,4 +23,13 @@
 
 O trecho é predominantemente funcional; o principal ganho vem da remoção da metáfora e de repetições de finalidade. **A obrigação da justificativa precisa ser explicitada somente para reprovação**, conforme o contrato da API. A compressão não pode descartar token, fila pendente, isolamento, decisão e validação.
 
-**Decisão do grupo:** PENDENTE (registrar aceite/rejeição e responsável antes da entrega).
+## Decisões propostas (a confirmar pelo grupo)
+
+| # | Decisão | Aplicada em |
+|---|---|---|
+| 4 | **Proposta aplicada na spec.** Esclarecer que a justificativa é obrigatória só ao reprovar | `specs/001-portal-web-g2/spec.md`, User Story 4 |
+| 5 | **Proposta.** Sugestão de resumo; texto original mantido na spec (normativa) | — |
+| 6 | **Proposta.** A metáfora fica só no texto de contexto; a regra (só versão aprovada chega ao fliperama) já está em FR-001 e FR-009 | — |
+| 1, 2, 3, 7, 8 | **Preservados** | — |
+
+Marcações de corte ou preservação: 8 (mínimo pedido na aula: 5).

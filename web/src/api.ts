@@ -151,6 +151,20 @@ export function getApiErrorMessage(error: unknown) {
   return 'Não foi possível concluir a operação. Tente novamente.'
 }
 
+// Mensagem em português para quando a API não devolve o corpo padrão { codigo, erro }.
+// Nunca expõe o código técnico "Erro HTTP <status>" ao usuário.
+function mapHttpStatusToFriendlyMessage(status: number) {
+  if (status === 400) return 'Os dados enviados não são válidos. Confira os campos e tente novamente.'
+  if (status === 401) return 'Token ausente ou inválido. Entre novamente com uma credencial válida.'
+  if (status === 403) return 'Você não tem permissão para realizar esta operação.'
+  if (status === 404) return 'O recurso solicitado não foi encontrado.'
+  if (status === 409) return 'Esta operação conflita com o estado atual. Atualize a página e tente novamente.'
+  if (status === 422) return 'O conteúdo não passou pela validação. Confira os requisitos e tente novamente.'
+  if (status === 429) return 'Muitas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente.'
+  if (status >= 500) return 'A API encontrou um problema interno. Tente novamente mais tarde.'
+  return 'Não foi possível concluir a operação. Tente novamente.'
+}
+
 async function request<T>(
   path: string,
   init: RequestInit = {},
@@ -184,7 +198,7 @@ async function request<T>(
   if (!response.ok) {
     const errorBody = body as ApiErrorPayload | null
     const message =
-      errorBody?.erro || `Erro HTTP ${response.status}`
+      errorBody?.erro || mapHttpStatusToFriendlyMessage(response.status)
 
     const error = new Error(message)
     Object.assign(error, {

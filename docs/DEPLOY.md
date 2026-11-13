@@ -6,7 +6,7 @@ descreve os dois.
 
 ## 1. A API (`api/`)
 
-Siga **[`api/docs/deploy.md`](../api/docs/deploy.md)** — é a documentação
+Siga **[`api/docs/deploy.md`](https://github.com/EliabedeJesusL/Portal-Web/blob/develop/api/docs/deploy.md)** — é a documentação
 oficial do G1, já escrita para Render + Supabase, e não precisa de nenhuma
 mudança. Resumo:
 

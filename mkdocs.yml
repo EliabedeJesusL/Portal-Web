@@ -1,6 +1,7 @@
 site_name: Recreio Arcade — Documentação do Grupo
 site_description: Documentação técnica e atividade Caveman + Spec-Kit
 repo_url: https://github.com/EliabedeJesusL/Portal-Web
+docs_dir: docs
 theme:
   name: mkdocs
 nav:
@@ -13,7 +14,11 @@ nav:
       - Exercício 4: aula-12/exercicio-4.md
       - Exercício 5: aula-12/exercicio-5.md
       - Guia Spec-Kit + Caveman do Grupo: aula-12/guia-spec-kit-caveman.md
-      - Proposta de tasks: aula-12/proposta-tasks-curadoria.md
+      - Aplicação SDD — feedback acessível: aula-12/implementacao-sdd.md
+      - Registro de alterações: aula-12/registro-de-alteracoes.md
   - Arquitetura: ARQUITETURA.md
   - Deploy: DEPLOY.md
+  - Docker e testes: DOCKER-E-TESTES.md
+  - Próximos passos de produção: PROXIMOS-PASSOS-PRODUCAO.md
+  - Diagnóstico de produção: DIAGNOSTICO-PRODUCAO.md
   - Integração G3: INTEGRACAO-G3.md

@@ -1,34 +1,29 @@
 # Aplicação SDD + Caveman — Feedback acessível da Curadoria
 
-> **Estado:** preparado para execução/validação. Não marque como concluído até aplicar código, rodar testes e conferir o diff.
+> **Estado:** código alterado em 12/11/2026. `typecheck`, `build:web` e testes em navegador ainda **não foram executados**.
 
 ## Funcionalidade escolhida
 
-Anúncio acessível do erro de autenticação e indicação de processamento no formulário do curador. Referência: `web/src/App.tsx` da `main` consultada em 12/11/2026.
+Anúncio acessível do erro de autenticação e indicação de processamento no formulário do curador (`CuratorLogin`).
 
-## Artefatos gerados para revisão
+## Artefatos Spec-Kit
 
-- [`spec.md`](../../specs/002-curadoria-feedback-acessivel/spec.md)
-- [`plan.md`](../../specs/002-curadoria-feedback-acessivel/plan.md)
-- [`tasks.md`](../../specs/002-curadoria-feedback-acessivel/tasks.md)
+- [`spec.md`](https://github.com/EliabedeJesusL/Portal-Web/blob/develop/specs/002-curadoria-feedback-acessivel/spec.md)
+- [`plan.md`](https://github.com/EliabedeJesusL/Portal-Web/blob/develop/specs/002-curadoria-feedback-acessivel/plan.md)
+- [`tasks.md`](https://github.com/EliabedeJesusL/Portal-Web/blob/develop/specs/002-curadoria-feedback-acessivel/tasks.md)
 
-> Observação: esses arquivos foram preparados a partir de leitura dos arquivos reais. Após rodar o Codex/Spec-Kit, registre o comando executado e atualize os artefatos somente se necessário.
+Foram escritos a partir da leitura do código real, não gerados por `/speckit.*`; por isso o comando executado não é registrado aqui.
 
 ## Revisão Caveman (equivalente a Full)
 
-**Prompt usado para revisão curta**: "Compare spec, plan e tasks. Preserve critérios, segurança e testes. Responda: divergência — impacto — correção. Máximo 8 linhas. Não altere código." 
+**Prompt:** "Compare spec, plan e tasks. Preserve critérios, segurança e testes. Responda: divergência — impacto — correção. Máximo 8 linhas. Não altere código."
 
-**Síntese esperada para conferência humana**: 
+- **Divergência:** erro visível sem região de alerta no login. **Correção:** `role="alert"` só nessa mensagem.
+- **Divergência:** botão desabilitado, mas o formulário não diz que está ocupado. **Correção:** `aria-busy={loading}` só no `<form>`.
+- **Risco:** mexer em `ErrorBox` anunciaria erros em outras telas. **Decisão:** `ErrorBox` não foi alterado.
+- **Divergência de local:** o plano apontava `App.tsx`; após o retrofit o componente está em `components/CuratorLogin.tsx`. **Correção:** plano atualizado.
 
-- **Problema:** erro visível, sem região de anúncio explicitamente identificada no login.
-- **Ação:** `role="alert"` somente na mensagem do login.
-- **Ação:** `aria-busy={loading}` somente no formulário.
-- **Risco:** anunciar mensagens indevidamente em outras telas se `ErrorBox` for modificado globalmente.
-- **Teste:** DOM, teclado, loading e build; teste com leitor de tela quando possível.
-
-Este texto é proposta de síntese, não medição de tokens nem resultado de agente executado.
-
-## Mudança mínima no código
+## Mudança no código (`web/src/components/CuratorLogin.tsx`)
 
 ```tsx
 // Antes
@@ -36,31 +31,37 @@ Este texto é proposta de síntese, não medição de tokens nem resultado de ag
 <form className="form-grid" onSubmit={validate}>
 
 // Depois
-{error && <div role="alert"><ErrorBox message={error} /></div>}
+{error && (
+  <div role="alert">
+    <ErrorBox message={error} />
+  </div>
+)}
 <form className="form-grid" onSubmit={validate} aria-busy={loading}>
 ```
 
-## Execução — preencher após realizar
+## Evidências
 
 | Evidência | Resultado real |
 |---|---|
-| Branch usada | PENDENTE |
-| Comando Spec-Kit/Codex executado | PENDENTE |
-| Revisão Caveman/prompt aplicado | PENDENTE |
-| Arquivo e diff alterados | PENDENTE |
-| Build web | NÃO EXECUTADO |
-| Typecheck | NÃO EXECUTADO |
-| Teste de token inválido / DOM | NÃO EXECUTADO |
-| Teste por teclado | NÃO EXECUTADO |
-| Leitor de tela (se disponível) | NÃO EXECUTADO |
-| Commit / PR | PENDENTE |
+| Branch usada | Ainda não commitado; usar `develop` |
+| Comando Spec-Kit executado | Nenhum (artefatos escritos à mão a partir do código) |
+| Revisão Caveman | Prompt acima, equivalente a Full |
+| Arquivos alterados | `web/src/components/CuratorLogin.tsx` (e os demais do retrofit, ver [registro](registro-de-alteracoes.md)) |
+| Sessão e API intactas (T05) | Conferido lendo o código: `validate`, `setCuratorToken` e `api.validarCurador` iguais ao original |
+| `mkdocs build --strict` | Executado, sem avisos |
+| Build web | **Não executado** |
+| Typecheck | **Não executado** |
+| DOM com token inválido | **Não executado** |
+| Teclado | **Não executado** |
+| Leitor de tela | **Não executado** |
+| Commit / PR | Pendente |
 
-## Antes e depois: contribuição ao projeto
+## Antes e depois
 
-**Antes:** mensagem de erro do login renderizada sem uma região de alerta dedicada; carregamento indicado visualmente.  
-**Depois esperado:** região de alerta acessível e atributo semântico de processamento, mantendo comportamento e autenticação.  
-**Caveman:** orientou a concentrar revisão em problema, mudança, risco e teste, sem reescrever o restante do sistema.
+**Antes:** mensagem de erro sem região de alerta; carregamento só visual.
+**Depois:** erro dentro de `role="alert"`; `aria-busy` verdadeiro durante a validação; botão e rótulo `VALIDANDO...` como antes.
+**Caveman:** manteve a revisão em divergência, impacto e correção, e evitou tocar no `ErrorBox` global.
 
-## Lições e limites
+## Limites
 
-A compressão é útil para localizar mudanças pequenas. Não pode omitir regras de segurança, condições de erro ou validação. Uma marcação ARIA não substitui teste real com leitor de tela nem comprova por si só a acessibilidade integral da tela.
+A compressão ajuda a achar mudanças pequenas, mas não pode omitir regras de segurança nem condições de erro. ARIA não substitui teste com leitor de tela.

@@ -1,8 +1,8 @@
 # Spec — Feedback acessível na autenticação da Curadoria
 
 **Feature:** `002-curadoria-feedback-acessivel`  
-**Origem:** revisão da implementação real em `web/src/App.tsx`, branch `main`, consultada em 12/11/2026.  
-**Estado:** proposta preparada para revisão SDD; não confundir com execução automatizada da skill.
+**Origem:** revisão da implementação real do `CuratorLogin` (na época em `web/src/App.tsx`), branch `main`, consultada em 12/11/2026.  
+**Estado:** implementada em 12/11/2026 em `web/src/components/CuratorLogin.tsx`; validação em navegador/leitor de tela pendente. Preparada com prompts equivalentes ao Caveman, sem execução automatizada da skill.
 
 ## Problema
 
